@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: sonarqube-damonset
+  labels:
+    app: sonarqube
+spec:
+  selector:
+    matchLabels:
+      app: sonarqube
+  template:
+    metadata:
+      labels:
+        app: sonarqube
+    spec:
+      containers:
+        - name: sonarqube
+          image: abhidevops24/devops20:sonarqube-20
+          ports:
+            - containerPort: 9000
+      imagePullSecrets:
+        - name: regcred
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: sonarqube-service
+spec:
+  type: NodePort
+  selector:
+    app: sonarqube
+  ports:
+    - port: 9000
+      targetPort: 9000
+      nodePort: 30001
+

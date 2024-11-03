@@ -1,0 +1,55 @@
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: mariadb-sts
+spec:
+  serviceName: mariadb-service
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mariadb-sts
+  template:
+    metadata:
+      labels:
+        app: mariadb-sts
+    spec:
+      containers:
+        - name: mriadb
+          image: abhidevops24/devops20:mariadb-20
+          ports:
+            - containerPort: 3306
+          env:
+            - name: MYSQL_ROOT_PASSWORD
+              value: password
+          volumeMounts:
+            - name: mariadb-data
+              mountPath: /var/lib/mysql
+      imagePullSecrets:
+        - name: regcred
+      volumes:
+        - name: mariadb-data
+          emptyDir: {}
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+            - matchExpressions:
+              - key: dedicated
+                operator: In
+                values:
+                - worker-node-1
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: mariadb-service
+spec:
+  ports:
+    - port: 3306
+      targetPort: 3306
+  type: ClusterIP
+  selector:
+    app: mariadb-sts
+

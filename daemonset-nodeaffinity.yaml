@@ -1,0 +1,30 @@
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: daemon-naffinity
+  labels:
+    app: daemonset-nodeaffinity
+spec:
+  selector:
+    matchLabels:
+      app: daemonset-nodeaffinity
+  template:
+    metadata:
+      labels:
+        app: daemonset-nodeaffinity
+    spec:
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+            - matchExpressions:
+              - key: dedicated
+                operator: In
+                values:
+                - worker-node-1
+      containers:
+        - name: nginx
+          image: nginx:latest
+          ports:
+          - containerPort: 80
+

@@ -1,0 +1,23 @@
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: daemon-nselector
+  labels:
+    app: daemonset-nodeselector
+spec:
+  selector:
+    matchLabels:
+      app: daemonset-nodeselector
+  template:
+    metadata:
+      labels:
+        app: daemonset-nodeselector
+    spec:
+      nodeSelector:
+        dedicated: worker-node-1
+      containers:
+        - name: nginx
+          image: nginx:latest
+          ports:
+          - containerPort: 80
+

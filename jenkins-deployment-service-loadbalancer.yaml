@@ -1,0 +1,42 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: jenkins-deployment
+  labels:
+    app: jenkins-load
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: jenkins-load
+  template:
+    metadata:
+      labels:
+        app: jenkins-load
+    spec:
+      containers:
+      - name: jenkins-pod-load
+        image: abhidevops24/devops20:jenkins-20
+        ports:
+        - containerPort: 8080
+      imagePullSecrets:
+        - name: regcred  # Name of the secret for the private repository
+
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: jenkins-service-load
+spec:
+  selector:
+    app: jenkins-load
+  ports:
+    - protocol: TCP
+      port: 8081
+      targetPort: 8080
+  type: LoadBalancer
+
+
+
